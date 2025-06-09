@@ -28,6 +28,8 @@ import { CacheKeys } from "lib/cache/cache-keys";
 import { getSession } from "auth/server";
 import logger from "logger";
 import { redirect } from "next/navigation";
+import { Agent, AgentInsert } from "app-types/agent";
+import { pgAgentRepository } from "@/lib/db/pg/repositories/agent-repository.pg";
 
 export async function getUserId() {
   const session = await getSession();
@@ -286,4 +288,53 @@ export async function rememberMcpServerCustomizationsAction(userId: string) {
 
   serverCache.set(key, prompts, 1000 * 60 * 30); // 30 minutes
   return prompts;
+}
+
+export async function selectAgentListByUserIdAction() {
+  const userId = await getUserId();
+  const agents = await pgAgentRepository.selectByUserId(userId);
+  return agents;
+}
+
+export async function insertAgentAction(agent: AgentInsert) {
+  const userId = await getUserId();
+  const newAgent = await pgAgentRepository.save({
+    ...agent,
+    userId,
+  });
+  return newAgent;
+}
+
+export async function selectAgentByIdAction(id: string) {
+  const agent = await pgAgentRepository.selectById(id);
+  return agent;
+}
+
+export async function updateAgentAction(agent: {
+  id: string;
+  name?: string;
+  instructions?: {
+    systemPrompt: string;
+  };
+}) {
+  const updatedAgent = await pgAgentRepository.update({
+    id: agent.id,
+    name: agent.name,
+    instructions: agent.instructions,
+  });
+  await serverCache.delete(CacheKeys.agent(agent.id));
+  return updatedAgent;
+}
+
+export async function updateAgentMcpServersAction(
+  id: string,
+  mcpServers: string[],
+) {
+  await pgAgentRepository.updateMcpServers(id, mcpServers);
+  await serverCache.delete(CacheKeys.agent(id));
+}
+
+export async function deleteAgentAction(id: string) {
+  await serverCache.delete(CacheKeys.agent(id));
+  await pgAgentRepository.deleteById(id);
 }

@@ -10,7 +10,20 @@ import {
   uuid,
   boolean,
   unique,
+  jsonb,
 } from "drizzle-orm/pg-core";
+
+export const UserSchema = pgTable("user", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").default(false).notNull(),
+  password: text("password"),
+  image: text("image"),
+  preferences: json("preferences").default({}).$type<UserPreferences>(),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
 
 export const ChatThreadSchema = pgTable("chat_thread", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -51,18 +64,6 @@ export const McpServerSchema = pgTable("mcp_server", {
   name: text("name").notNull(),
   config: json("config").notNull().$type<MCPServerConfig>(),
   enabled: boolean("enabled").notNull().default(true),
-  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-});
-
-export const UserSchema = pgTable("user", {
-  id: uuid("id").primaryKey().notNull().defaultRandom(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").default(false).notNull(),
-  password: text("password"),
-  image: text("image"),
-  preferences: json("preferences").default({}).$type<UserPreferences>(),
   createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
@@ -155,6 +156,24 @@ export const McpServerCustomizationSchema = pgTable(
   (table) => [unique().on(table.userId, table.mcpServerId)],
 );
 
+export const AgentSchema = pgTable("agent", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  userId: uuid("user_id")
+    .references(() => UserSchema.id)
+    .notNull(),
+  instructions: jsonb("instructions"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const AgentMcpServerSchema = pgTable("agent_mcp_server", {
+  agentId: uuid("agent_id")
+    .references(() => AgentSchema.id)
+    .notNull(),
+  mcpServerId: uuid("mcp_server_id").notNull(),
+});
+
 export type McpServerEntity = typeof McpServerSchema.$inferSelect;
 export type ChatThreadEntity = typeof ChatThreadSchema.$inferSelect;
 export type ChatMessageEntity = typeof ChatMessageSchema.$inferSelect;
@@ -164,3 +183,5 @@ export type ToolCustomizationEntity =
   typeof McpToolCustomizationSchema.$inferSelect;
 export type McpServerCustomizationEntity =
   typeof McpServerCustomizationSchema.$inferSelect;
+export type AgentEntity = typeof AgentSchema.$inferSelect;
+export type AgentMcpServerEntity = typeof AgentMcpServerSchema.$inferSelect;

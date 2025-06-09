@@ -16,13 +16,18 @@ import { SelectModel } from "./select-model";
 import { appStore } from "@/app/store";
 import { useShallow } from "zustand/shallow";
 import { customModelProvider } from "lib/ai/models";
-import { ChatMention, ChatMessageAnnotation } from "app-types/chat";
+import {
+  ChatMention,
+  ChatMessageAnnotation,
+  AgentMention,
+} from "app-types/chat";
 import dynamic from "next/dynamic";
 import { ToolModeDropdown } from "./tool-mode-dropdown";
 import { PROMPT_PASTE_MAX_LENGTH } from "lib/const";
 import { ToolSelectDropdown } from "./tool-select-dropdown";
 import { Tooltip, TooltipContent, TooltipTrigger } from "ui/tooltip";
 import { useTranslations } from "next-intl";
+import { useAgents } from "@/hooks/use-agents";
 
 interface PromptInputProps {
   placeholder?: string;
@@ -57,6 +62,7 @@ export default function PromptInput({
   voiceDisabled,
 }: PromptInputProps) {
   const t = useTranslations("Chat");
+  const { agents } = useAgents();
 
   const [mcpList, globalModel, appStoreMutate] = appStore(
     useShallow((state) => [state.mcpList, state.model, state.mutate]),
@@ -77,7 +83,9 @@ export default function PromptInput({
     [setModel, appStoreMutate],
   );
 
-  const [toolMentionItems, setToolMentionItems] = useState<ChatMention[]>([]);
+  const [toolMentionItems, setToolMentionItems] = useState<
+    (ChatMention | AgentMention)[]
+  >([]);
 
   const modelList = useMemo(() => {
     return customModelProvider.modelsInfo;
@@ -86,23 +94,24 @@ export default function PromptInput({
   const [pastedContents, setPastedContents] = useState<string[]>([]);
 
   const mentionItems = useMemo(() => {
-    return (
+    const toolMentions =
       (mcpList?.flatMap((mcp) => [
         {
-          type: "mcpServer",
+          type: "mcpServer" as const,
           name: mcp.name,
           serverId: mcp.id,
         },
         ...mcp.toolInfo.map((tool) => {
           return {
-            type: "tool",
+            type: "tool" as const,
             name: tool.name,
             serverId: mcp.id,
             serverName: mcp.name,
           };
         }),
-      ]) as ChatMention[]) ?? []
-    );
+      ]) as ChatMention[]) ?? [];
+
+    return toolMentions;
   }, [mcpList]);
 
   const handlePaste = (e: React.ClipboardEvent) => {
@@ -128,9 +137,15 @@ export default function PromptInput({
 
     const annotations: ChatMessageAnnotation[] = [];
     if (toolMentionItems.length > 0) {
-      annotations.push({
-        mentions: toolMentionItems,
-      });
+      const agentMentions = toolMentionItems.filter(
+        (m): m is AgentMention => "agentId" in m && m.type === "agent",
+      );
+      if (agentMentions.length > 0) {
+        annotations.push({
+          type: "mentions",
+          mentions: agentMentions,
+        });
+      }
     }
     setPastedContents([]);
     setToolMentionItems([]);
@@ -164,6 +179,7 @@ export default function PromptInput({
                   placeholder={placeholder ?? t("placeholder")}
                   onPaste={handlePaste}
                   items={mentionItems}
+                  agents={agents}
                 />
               </div>
               <div className="flex w-full items-center gap-2">

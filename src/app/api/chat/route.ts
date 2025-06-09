@@ -7,6 +7,7 @@ import {
   formatDataStreamPart,
   appendClientMessage,
   Message,
+  Tool,
 } from "ai";
 
 import { customModelProvider, isToolCallUnsupportedModel } from "lib/ai/models";
@@ -19,12 +20,15 @@ import {
   buildMcpServerCustomizationsSystemPrompt,
   buildProjectInstructionsSystemPrompt,
   buildUserSystemPrompt,
+  buildAgentSystemPrompt,
 } from "lib/ai/prompts";
 import {
   chatApiSchemaRequestBodySchema,
   ChatMention,
   ChatMessageAnnotation,
+  AgentMention,
 } from "app-types/chat";
+import { AgentWithServers } from "app-types/agent";
 
 import { errorIf, safe } from "ts-safe";
 
@@ -42,41 +46,100 @@ import {
   getAllowedDefaultToolkit,
   filterToolsByAllowedMCPServers,
   filterMcpServerCustomizations,
+  getAgentFromMentions,
+  filterToolsByAgent,
 } from "./helper";
 import {
   generateTitleFromUserMessageAction,
   rememberMcpServerCustomizationsAction,
+  selectProjectByIdAction,
 } from "./actions";
 import { getSession } from "auth/server";
+import { userRepository } from "lib/db/repository";
+import { VercelAIMcpTool } from "app-types/mcp";
+
+type ChatAnnotation =
+  | ChatMessageAnnotation
+  | {
+      type: "usage";
+      usageTokens: number;
+      toolChoice?: string;
+    };
 
 export async function POST(request: Request) {
   try {
-    const json = await request.json();
-
     const session = await getSession();
-
-    if (!session?.user.id) {
-      return new Response("Unauthorized", { status: 401 });
-    }
-
+    const body = await request.json();
     const {
       id,
+      projectId,
       message,
       model: modelName,
       toolChoice,
-      allowedAppDefaultToolkit,
       allowedMcpServers,
-      projectId,
-    } = chatApiSchemaRequestBodySchema.parse(json);
+      allowedAppDefaultToolkit,
+    } = chatApiSchemaRequestBodySchema.parse(body);
 
-    const model = customModelProvider.getModel(modelName);
+    // Get the mentioned agent if any
+    const agent = (await getAgentFromMentions(
+      message.annotations as ChatMessageAnnotation[],
+    )) as AgentWithServers | null;
+
+    // Get user preferences
+    const userPreferences =
+      (await userRepository.getPreferences(session.user.id)) || undefined;
+
+    // Build system prompts
+    const userSystemPrompt = buildUserSystemPrompt(
+      session?.user,
+      userPreferences,
+    );
+    const projectSystemPrompt = projectId
+      ? buildProjectInstructionsSystemPrompt(
+          (await selectProjectByIdAction(projectId))?.instructions,
+        )
+      : undefined;
+    const agentSystemPrompt = agent ? buildAgentSystemPrompt(agent) : undefined;
+
+    // Merge system prompts with agent prompt taking precedence
+    const systemPrompt = mergeSystemPrompt(
+      agentSystemPrompt,
+      projectSystemPrompt,
+      userSystemPrompt,
+    );
+
+    // Get available tools
+    let availableTools = mcpClientsManager.tools();
+
+    // Filter tools based on agent if one is mentioned
+    if (agent) {
+      const filteredTools = Object.entries(availableTools).filter(([_, tool]) =>
+        agent.mcpServers?.includes(tool._mcpServerId),
+      );
+      availableTools = Object.fromEntries(filteredTools);
+    } else {
+      // Apply normal tool filtering if no agent is mentioned
+      if (allowedMcpServers) {
+        availableTools = filterToolsByAllowedMCPServers(
+          availableTools,
+          allowedMcpServers,
+        );
+      }
+      if (allowedAppDefaultToolkit) {
+        const defaultTools = getAllowedDefaultToolkit(allowedAppDefaultToolkit);
+        availableTools = { ...availableTools, ...defaultTools } as Record<
+          string,
+          VercelAIMcpTool
+        >;
+      }
+    }
 
     let thread = await chatRepository.selectThreadDetails(id);
 
     if (!thread) {
       const title = await generateTitleFromUserMessageAction({
         message,
-        model,
+        model: customModelProvider.getModel(modelName),
       });
       const newThread = await chatRepository.insertThread({
         id,
@@ -105,19 +168,20 @@ export async function POST(request: Request) {
     const mcpTools = mcpClientsManager.tools();
 
     const mentions = annotations
-      .flatMap((annotation) => annotation.mentions)
-      .filter(Boolean) as ChatMention[];
+      .flatMap((annotation) => annotation.mentions ?? [])
+      .filter((mention): mention is AgentMention => mention?.type === "agent");
 
     const isToolCallAllowed =
-      (!isToolCallUnsupportedModel(model) && toolChoice != "none") ||
+      (!isToolCallUnsupportedModel(customModelProvider.getModel(modelName)) &&
+        toolChoice != "none") ||
       mentions.length > 0;
 
     const tools = safe(mcpTools)
       .map(errorIf(() => !isToolCallAllowed && "Not allowed"))
       .map((tools) => {
-        // filter tools by mentions
-        if (mentions.length) {
-          return filterToolsByMentions(tools, mentions);
+        // filter tools by agent if one is mentioned
+        if (mentions.length && agent) {
+          return filterToolsByAgent(tools, agent);
         }
         // filter tools by allowed mcp servers
         return filterToolsByAllowedMCPServers(tools, allowedMcpServers);
@@ -152,7 +216,7 @@ export async function POST(request: Request) {
           );
         }
 
-        const userPreferences = thread?.userPreferences || undefined;
+        const _userPreferences = thread?.userPreferences || undefined;
 
         const mcpServerCustomizations = await safe()
           .map(() => {
@@ -163,11 +227,13 @@ export async function POST(request: Request) {
           .map((v) => filterMcpServerCustomizations(tools!, v))
           .orElse({});
 
-        const systemPrompt = mergeSystemPrompt(
-          buildUserSystemPrompt(session.user, userPreferences),
-          buildProjectInstructionsSystemPrompt(thread?.instructions),
-          buildMcpServerCustomizationsSystemPrompt(mcpServerCustomizations),
-        );
+        const mcpCustomizationsPrompt =
+          buildMcpServerCustomizationsSystemPrompt(mcpServerCustomizations);
+
+        // Merge all system prompts
+        const finalSystemPrompt = mcpCustomizationsPrompt
+          ? `${systemPrompt}\n\n${mcpCustomizationsPrompt}`
+          : systemPrompt;
 
         // Precompute toolChoice to avoid repeated tool calls
         const computedToolChoice =
@@ -190,8 +256,8 @@ export async function POST(request: Request) {
           .unwrap();
 
         const result = streamText({
-          model,
-          system: systemPrompt,
+          model: customModelProvider.getModel(modelName),
+          system: finalSystemPrompt,
           messages,
           maxSteps: 10,
           experimental_continueSteps: true,
@@ -212,19 +278,24 @@ export async function POST(request: Request) {
                 parts: message.parts,
                 attachments: message.experimental_attachments,
                 id: message.id,
-                annotations: appendAnnotations(message.annotations, {
-                  usageTokens: usage.promptTokens,
-                }),
+                annotations: appendAnnotations(
+                  message.annotations as ChatMessageAnnotation[],
+                  {
+                    type: "usage",
+                    usageTokens: usage.promptTokens,
+                  } as ChatAnnotation,
+                ),
               });
             }
             const assistantMessage = appendMessages.at(-1);
             if (assistantMessage) {
               const annotations = appendAnnotations(
-                assistantMessage.annotations,
+                assistantMessage.annotations as ChatMessageAnnotation[],
                 {
+                  type: "usage",
                   usageTokens: usage.completionTokens,
                   toolChoice,
-                },
+                } as ChatAnnotation,
               );
               dataStream.writeMessageAnnotation(annotations.at(-1)!);
               await chatRepository.upsertMessage({

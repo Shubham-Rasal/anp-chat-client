@@ -50,12 +50,28 @@ export type ChatMention =
       name: string;
     };
 
-export type ChatMessageAnnotation = {
-  mentions?: ChatMention[];
-  usageTokens?: number;
-  toolChoice?: "auto" | "none" | "manual";
-  [key: string]: any;
+export type AgentMention = {
+  type: "agent";
+  name: string;
+  agentId: string;
 };
+
+export type ChatMessageAnnotation = {
+  type: string;
+  mentions?: AgentMention[];
+  toolCalls?: {
+    name: string;
+    args: { [key: string]: JSONValue };
+  }[];
+};
+
+export type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: JSONValue }
+  | JSONValue[];
 
 export enum AppDefaultToolkit {
   Visualization = "visualization",

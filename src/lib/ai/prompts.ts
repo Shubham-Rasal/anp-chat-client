@@ -4,6 +4,7 @@ import { UserPreferences } from "app-types/user";
 import { Project } from "app-types/chat";
 import { User } from "better-auth";
 import { createMCPToolId } from "./mcp/mcp-tool-id";
+import { Agent } from "app-types/agent";
 
 export const CREATE_THREAD_TITLE_PROMPT = `\n
       - you will generate a short title based on the first message a user begins a conversation with
@@ -196,3 +197,13 @@ The user has declined to run the tool. Please respond with the following three a
 
 3. Guide the user to choose their preferred direction with a friendly and clear tone.
 `.trim();
+
+export const buildAgentSystemPrompt = (agent: Agent) => {
+  if (!agent.instructions?.systemPrompt?.trim()) return undefined;
+
+  return `
+### Agent Instructions ###
+<agent_instructions>
+${agent.instructions.systemPrompt.trim()}
+</agent_instructions>`.trim();
+};

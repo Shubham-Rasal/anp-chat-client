@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Safe, safe } from "ts-safe";
 import { errorToString } from "lib/utils";
 import { McpServerSchema } from "lib/db/pg/schema.pg";
+import { pgMcpRepository } from "lib/db/pg/repositories/mcp-repository.pg";
 
 export async function selectMcpClientsAction() {
   const list = await mcpClientsManager.getClients();
@@ -122,4 +123,8 @@ export async function callMcpToolByServerNameAction(
     return client.client.callTool(toolName, input);
   });
   return safeCallToolResult(chain);
+}
+
+export async function selectAllMcpServersAction() {
+  return pgMcpRepository.selectAll();
 }

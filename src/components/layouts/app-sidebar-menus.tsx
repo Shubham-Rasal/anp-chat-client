@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { MCPIcon } from "ui/mcp-icon";
 import { WriteIcon } from "ui/write-icon";
+import { RobotIcon } from "ui/robot-icon";
 
 export function AppSidebarMenus() {
   const router = useRouter();
@@ -60,6 +61,18 @@ export function AppSidebarMenus() {
                   <SidebarMenuButton className="font-semibold">
                     <MCPIcon className="size-4 fill-accent-foreground" />
                     {t("mcpConfiguration")}
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <SidebarMenuItem>
+                <Link href="/agents">
+                  <SidebarMenuButton className="font-semibold">
+                    <RobotIcon className="size-4" />
+                    {t("agents")}
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>

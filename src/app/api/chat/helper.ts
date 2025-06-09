@@ -22,6 +22,9 @@ import {
   VercelAIMcpTool,
 } from "app-types/mcp";
 import { MANUAL_REJECT_RESPONSE_PROMPT } from "lib/ai/prompts";
+import { Agent, AgentWithServers } from "app-types/agent";
+import { buildAgentSystemPrompt } from "lib/ai/prompts";
+import { agentRepository } from "lib/db/repository";
 
 export function filterToolsByMentions(
   tools: Record<string, VercelAIMcpTool>,
@@ -238,5 +241,37 @@ export function filterMcpServerCustomizations(
       return acc;
     },
     {} as Record<string, McpServerCustomizationsPrompt>,
+  );
+}
+
+export async function getAgentFromMentions(
+  annotations?: ChatMessageAnnotation[],
+): Promise<Agent | null> {
+  if (!annotations?.length) return null;
+
+  const agentMentions = annotations.flatMap(
+    (annotation) =>
+      annotation.mentions?.filter((mention) => mention.type === "agent") ?? [],
+  );
+
+  if (!agentMentions.length) return null;
+
+  // Use the first mentioned agent
+  const agentId = agentMentions[0].agentId;
+  return await agentRepository.selectById(agentId);
+}
+
+export function filterToolsByAgent(
+  tools: Record<string, VercelAIMcpTool>,
+  agent: AgentWithServers,
+): Record<string, VercelAIMcpTool> {
+  // If the agent has no MCP servers specified, return no tools
+  if (!agent.mcpServers?.length) return {};
+
+  // Only return tools from the agent's allowed MCP servers
+  return Object.fromEntries(
+    Object.entries(tools).filter(([_, tool]) =>
+      agent.mcpServers.includes(tool._mcpServerId),
+    ),
   );
 }

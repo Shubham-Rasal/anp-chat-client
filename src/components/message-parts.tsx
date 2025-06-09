@@ -43,7 +43,7 @@ import {
 
 import { toast } from "sonner";
 import { safe } from "ts-safe";
-import { ChatMessageAnnotation } from "app-types/chat";
+import { AgentMention, ChatMessageAnnotation } from "app-types/chat";
 import { DefaultToolName } from "lib/ai/tools/utils";
 import { Skeleton } from "ui/skeleton";
 import { PieChart } from "./tool-invocation/pie-chart";
@@ -90,23 +90,39 @@ interface ToolMessagePartProps {
 interface HighlightedTextProps {
   text: string;
   mentions: string[];
+  agentMentions?: AgentMention[];
 }
 
-const HighlightedText = memo(({ text, mentions }: HighlightedTextProps) => {
-  if (!mentions.length) return text;
+const HighlightedText = memo(
+  ({ text, mentions, agentMentions }: HighlightedTextProps) => {
+    if (!mentions.length && !agentMentions?.length) return text;
 
-  const parts = text.split(/(\s+)/);
-  return parts.map((part, index) => {
-    if (mentions.includes(part.trim())) {
-      return (
-        <span key={index} className="mention">
-          {part}
-        </span>
-      );
-    }
-    return part;
-  });
-});
+    const parts = text.split(/(\s+)/);
+    return parts.map((part, index) => {
+      const trimmedPart = part.trim();
+      if (mentions.includes(trimmedPart)) {
+        return (
+          <span key={index} className="mention">
+            {part}
+          </span>
+        );
+      }
+      if (
+        agentMentions?.some((mention) => `@${mention.name}` === trimmedPart)
+      ) {
+        return (
+          <span
+            key={index}
+            className="mention bg-primary/20 text-primary font-medium rounded px-1"
+          >
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  },
+);
 
 HighlightedText.displayName = "HighlightedText";
 
@@ -123,18 +139,33 @@ export const UserMessagePart = ({
   const [mode, setMode] = useState<"view" | "edit">("view");
   const [isDeleting, setIsDeleting] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const toolMentions = useMemo(() => {
-    if (!message.annotations?.length) return [];
-    return Array.from(
+
+  const { toolMentions, agentMentions } = useMemo(() => {
+    if (!message.annotations?.length)
+      return { toolMentions: [], agentMentions: [] };
+
+    const annotations = message.annotations as ChatMessageAnnotation[];
+    const toolMentions = Array.from(
       new Set(
-        message.annotations
+        annotations
           .flatMap((annotation) => {
-            return (annotation as ChatMessageAnnotation).mentions ?? [];
+            return (
+              annotation.mentions
+                ?.filter((m) => m.type !== "agent")
+                .map((m) => `@${m.name}`) ?? []
+            );
           })
-          .filter(Boolean)
-          .map((v) => `@${v.name}`),
+          .filter(Boolean),
       ),
     );
+
+    const agentMentions = annotations
+      .flatMap((annotation) => {
+        return annotation.mentions?.filter((m) => m.type === "agent") ?? [];
+      })
+      .filter(Boolean);
+
+    return { toolMentions, agentMentions };
   }, [message.annotations]);
 
   const deleteMessage = useCallback(() => {
@@ -192,7 +223,11 @@ export const UserMessagePart = ({
       >
         {isLast || part.text.length <= PROMPT_PASTE_MAX_LENGTH ? (
           <p className={cn("whitespace-pre-wrap text-sm")}>
-            <HighlightedText text={part.text} mentions={toolMentions} />
+            <HighlightedText
+              text={part.text}
+              mentions={toolMentions}
+              agentMentions={agentMentions}
+            />
           </p>
         ) : (
           <MessagePastesContentCard initialContent={part.text} readonly />

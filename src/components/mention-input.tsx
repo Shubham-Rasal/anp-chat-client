@@ -18,33 +18,37 @@ import { fuzzySearch } from "@/lib/fuzzy-search";
 import { WrenchIcon } from "lucide-react";
 import { MCPIcon } from "ui/mcp-icon";
 import { PROMPT_PASTE_MAX_LENGTH } from "lib/const";
-import { ChatMention } from "app-types/chat";
+import { ChatMention, AgentMention } from "app-types/chat";
+import { Agent } from "app-types/agent";
 
-type MentionItem = ChatMention & { label: string; id: string };
+type MentionItem = (ChatMention | AgentMention) & { label: string; id: string };
 
 interface MentionInputProps {
   input?: string;
   onChange?: (value: string) => void;
-  onChangeMention?: (mentionItems: ChatMention[]) => void;
+  onChangeMention?: (mentionItems: (ChatMention | AgentMention)[]) => void;
   onEnter?: () => void;
   placeholder?: string;
   items?: ChatMention[];
+  agents?: Agent[];
   onPaste?: (e: React.ClipboardEvent) => void;
 }
 
-const encodeMentionItem = (item: ChatMention): string => {
+const encodeMentionItem = (item: ChatMention | AgentMention): string => {
   const arr: string[] = [item.type];
   if (item.type === "tool") {
     arr.push(item.name, item.serverName || "", item.serverId);
   } else if (item.type === "mcpServer") {
     arr.push(item.name, item.serverId);
+  } else if (item.type === "agent") {
+    arr.push(item.name, item.agentId);
   }
   return JSON.stringify(arr);
 };
 
-const decodeMentionItem = (item: string): ChatMention => {
+const decodeMentionItem = (item: string): ChatMention | AgentMention => {
   const arr = JSON.parse(item ?? "[]") as string[];
-  const type = arr[0] as ChatMention["type"];
+  const type = arr[0] as "tool" | "mcpServer" | "unknown" | "agent";
   if (type === "tool") {
     return {
       type: "tool",
@@ -58,9 +62,15 @@ const decodeMentionItem = (item: string): ChatMention => {
       name: arr[1],
       serverId: arr[2],
     };
+  } else if (type === "agent") {
+    return {
+      type: "agent" as const,
+      name: arr[1],
+      agentId: arr[2],
+    };
   }
   return {
-    type: "unknown",
+    type: "unknown" as const,
     name: arr[1],
   };
 };
@@ -73,6 +83,7 @@ export default function MentionInput({
   placeholder = "Type a message...",
   onPaste,
   items = [],
+  agents = [],
 }: MentionInputProps) {
   const [suggestion, setSuggestion] = useState<{
     top: number;
@@ -85,12 +96,26 @@ export default function MentionInput({
   const mentionRef = useRef<HTMLDivElement>(null);
 
   const mentionItems = useMemo(() => {
-    return items.map((item) => ({
+    const toolItems = items.map((item) => ({
       id: encodeMentionItem(item),
       label: item.name,
       ...item,
     }));
-  }, [items]);
+
+    const agentItems = agents.map((agent) => ({
+      id: encodeMentionItem({
+        type: "agent" as const,
+        name: agent.name,
+        agentId: agent.id,
+      }),
+      label: agent.name,
+      type: "agent" as const,
+      name: agent.name,
+      agentId: agent.id,
+    }));
+
+    return [...toolItems, ...agentItems];
+  }, [items, agents]);
 
   const filteredItems = useMemo(() => {
     if (!suggestion?.query || !mentionItems.length) return mentionItems;
@@ -417,7 +442,7 @@ const MentionItem = memo(function MentionItem({
     return item.label;
   }, [item]);
 
-  const serverName = useMemo(() => {
+  const _serverName = useMemo(() => {
     if (item.type == "tool") {
       return item.serverName;
     }
@@ -451,26 +476,29 @@ const MentionItem = memo(function MentionItem({
   }, [addMention, item]);
 
   return (
-    <div
-      ref={itemRef}
+    <button
       className={cn(
-        "px-3 py-2 cursor-pointer hover:bg-card text-xs rounded flex items-center gap-2",
-        isSelected && "bg-input",
+        "flex w-full items-center gap-2 rounded-sm px-2 py-1 text-sm hover:bg-accent",
+        isSelected && "bg-accent",
       )}
       onClick={handleClick}
     >
-      {item.type == "tool" ? (
-        <WrenchIcon className="size-3 text-muted-foreground" />
-      ) : item.type == "mcpServer" ? (
-        <div className="p-0.5 rounded bg-accent-foreground">
-          <MCPIcon className="size-3" />
-        </div>
-      ) : null}
+      {item.type === "agent" ? (
+        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/20">
+          <span className="text-xs font-medium text-primary">A</span>
+        </span>
+      ) : item.type === "tool" ? (
+        <WrenchIcon className="h-4 w-4" />
+      ) : (
+        <MCPIcon className="h-4 w-4" />
+      )}
       <HighlightText text={label} query={query} />
-      <span className="ml-auto text-xs text-muted-foreground">
-        {serverName}
-      </span>
-    </div>
+      {item.type === "tool" && item.serverName && (
+        <span className="ml-auto text-xs text-muted-foreground">
+          {item.serverName}
+        </span>
+      )}
+    </button>
   );
 });
 
