@@ -63,6 +63,7 @@ export type ChatMessageAnnotation = {
     name: string;
     args: { [key: string]: JSONValue };
   }[];
+  toolChoice?: string;
 };
 
 export type JSONValue =
