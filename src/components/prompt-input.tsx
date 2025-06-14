@@ -16,11 +16,7 @@ import { SelectModel } from "./select-model";
 import { appStore } from "@/app/store";
 import { useShallow } from "zustand/shallow";
 import { customModelProvider } from "lib/ai/models";
-import {
-  ChatMention,
-  ChatMessageAnnotation,
-  AgentMention,
-} from "app-types/chat";
+import { ChatMessageAnnotation, AgentMention } from "app-types/chat";
 import dynamic from "next/dynamic";
 import { ToolModeDropdown } from "./tool-mode-dropdown";
 import { PROMPT_PASTE_MAX_LENGTH } from "lib/const";
@@ -64,28 +60,26 @@ export default function PromptInput({
   const t = useTranslations("Chat");
   const { agents } = useAgents();
 
-  const [mcpList, globalModel, appStoreMutate] = appStore(
-    useShallow((state) => [state.mcpList, state.model, state.mutate]),
+  const [storeModel, storeMutate] = appStore(
+    useShallow((state) => [state.model, state.mutate]),
   );
 
   const chatModel = useMemo(() => {
-    return model ?? globalModel;
-  }, [model, globalModel]);
+    return model ?? storeModel;
+  }, [model, storeModel]);
 
   const setChatModel = useCallback(
-    (model: string) => {
+    (newModel: string) => {
       if (setModel) {
-        setModel(model);
+        setModel(newModel);
       } else {
-        appStoreMutate({ model });
+        storeMutate({ model: newModel });
       }
     },
-    [setModel, appStoreMutate],
+    [setModel, storeMutate],
   );
 
-  const [toolMentionItems, setToolMentionItems] = useState<
-    (ChatMention | AgentMention)[]
-  >([]);
+  const [toolMentionItems, setToolMentionItems] = useState<AgentMention[]>([]);
 
   const modelList = useMemo(() => {
     return customModelProvider.modelsInfo;
@@ -94,25 +88,9 @@ export default function PromptInput({
   const [pastedContents, setPastedContents] = useState<string[]>([]);
 
   const mentionItems = useMemo(() => {
-    const toolMentions =
-      (mcpList?.flatMap((mcp) => [
-        {
-          type: "mcpServer" as const,
-          name: mcp.name,
-          serverId: mcp.id,
-        },
-        ...mcp.toolInfo.map((tool) => {
-          return {
-            type: "tool" as const,
-            name: tool.name,
-            serverId: mcp.id,
-            serverName: mcp.name,
-          };
-        }),
-      ]) as ChatMention[]) ?? [];
-
-    return toolMentions;
-  }, [mcpList]);
+    // Only return empty array since we only want agent mentions
+    return [];
+  }, []);
 
   const handlePaste = (e: React.ClipboardEvent) => {
     const text = e.clipboardData.getData("text/plain");
@@ -174,7 +152,13 @@ export default function PromptInput({
                 <MentionInput
                   input={input}
                   onChange={setInput}
-                  onChangeMention={setToolMentionItems}
+                  onChangeMention={(mentions) => {
+                    // Filter to only allow agent mentions
+                    const agentMentions = mentions.filter(
+                      (m): m is AgentMention => m.type === "agent",
+                    );
+                    setToolMentionItems(agentMentions);
+                  }}
                   onEnter={submit}
                   placeholder={placeholder ?? t("placeholder")}
                   onPaste={handlePaste}
@@ -238,7 +222,7 @@ export default function PromptInput({
                     <TooltipTrigger asChild>
                       <div
                         onClick={() => {
-                          appStoreMutate((state) => ({
+                          storeMutate((state) => ({
                             voiceChat: {
                               ...state.voiceChat,
                               isOpen: true,
