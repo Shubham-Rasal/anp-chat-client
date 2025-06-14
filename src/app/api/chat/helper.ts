@@ -23,7 +23,7 @@ import {
 } from "app-types/mcp";
 import { MANUAL_REJECT_RESPONSE_PROMPT } from "lib/ai/prompts";
 import { Agent, AgentWithServers } from "app-types/agent";
-// import { buildAgentSystemPrompt } from "lib/ai/prompts";
+import { buildAgentSystemPrompt } from "lib/ai/prompts";
 import { agentRepository } from "lib/db/repository";
 
 export function filterToolsByMentions(

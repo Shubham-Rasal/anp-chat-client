@@ -7,7 +7,7 @@ import {
   formatDataStreamPart,
   appendClientMessage,
   Message,
-  // Tool,
+  Tool,
 } from "ai";
 
 import { customModelProvider, isToolCallUnsupportedModel } from "lib/ai/models";
@@ -24,7 +24,7 @@ import {
 } from "lib/ai/prompts";
 import {
   chatApiSchemaRequestBodySchema,
-  // ChatMention,
+  ChatMention,
   ChatMessageAnnotation,
   AgentMention,
 } from "app-types/chat";
@@ -35,7 +35,7 @@ import { errorIf, safe } from "ts-safe";
 import {
   appendAnnotations,
   excludeToolExecution,
-  // filterToolsByMentions,
+  filterToolsByMentions,
   handleError,
   manualToolExecuteByLastMessage,
   mergeSystemPrompt,
@@ -216,7 +216,7 @@ export async function POST(request: Request) {
           );
         }
 
-        // const _userPreferences = thread?.userPreferences || undefined;
+        const _userPreferences = thread?.userPreferences || undefined;
 
         const mcpServerCustomizations = await safe()
           .map(() => {

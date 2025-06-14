@@ -442,11 +442,11 @@ const MentionItem = memo(function MentionItem({
     return item.label;
   }, [item]);
 
-  // const _serverName = useMemo(() => {
-  //   if (item.type == "tool") {
-  //     return item.serverName;
-  //   }
-  // }, [item]);
+  const _serverName = useMemo(() => {
+    if (item.type == "tool") {
+      return item.serverName;
+    }
+  }, [item]);
 
   const itemRef = useRef<HTMLDivElement>(null);
 

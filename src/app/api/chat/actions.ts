@@ -28,7 +28,7 @@ import { CacheKeys } from "lib/cache/cache-keys";
 import { getSession } from "auth/server";
 import logger from "logger";
 import { redirect } from "next/navigation";
-import { AgentInsert } from "app-types/agent";
+import { Agent, AgentInsert } from "app-types/agent";
 import { pgAgentRepository } from "@/lib/db/pg/repositories/agent-repository.pg";
 
 export async function getUserId() {

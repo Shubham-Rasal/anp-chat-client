@@ -11,14 +11,6 @@ See the experience in action in the [preview](#preview) below!
 
 > Built with [Vercel AI SDK](https://sdk.vercel.ai) and [Next.js](https://nextjs.org/), this app adopts modern patterns for building AI chat interfaces. It leverages the power of the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) to seamlessly integrate external tools into your chat experience.
 
-🤖 **Agent Support**: This fork extends the original MCP Client Chatbot with full agent capabilities, allowing the chatbot to:
-
-- Autonomously execute multi-step tasks using available tools
-- Make intelligent decisions about tool selection and usage
-- Chain multiple tool calls together to achieve complex goals
-- Maintain context and state across multiple interactions
-- Self-correct and adapt based on results of tool executions
-
 ## Table of Contents
 
 - [MCP Client Chatbot](#mcp-client-chatbot)
@@ -33,14 +25,14 @@ See the experience in action in the [preview](#preview) below!
     - [Quick Start (Local Version) 🚀](#quick-start-local-version-)
     - [Environment Variables](#environment-variables)
   - [📘 Guides](#-guides)
-    - [🔌 MCP Server Setup \& Tool Testing](#-mcp-server-setup--tool-testing)
-    - [🐳 Docker Hosting Guide](#-docker-hosting-guide)
-    - [▲ Vercel Hosting Guide](#-vercel-hosting-guide)
-    - [🎯 System Prompts \& Chat Customization](#-system-prompts--chat-customization)
-    - [🔐 OAuth Sign-In Setup](#-oauth-sign-in-setup)
+      - [🔌 MCP Server Setup \& Tool Testing](#-mcp-server-setup--tool-testing)
+      - [🐳 Docker Hosting Guide](#-docker-hosting-guide)
+      - [▲ Vercel Hosting Guide](#-vercel-hosting-guide)
+      - [🎯 System Prompts \& Chat Customization](#-system-prompts--chat-customization)
+      - [🔐 OAuth Sign-In Setup](#-oauth-sign-in-setup)
   - [💡 Tips](#-tips)
-    - [🧠 Agentic Chatbot with Project Instructions](#-agentic-chatbot-with-project-instructions)
-    - [💬 Temporary Chat Windows](#-temporary-chat-windows)
+      - [🧠 Agentic Chatbot with Project Instructions](#-agentic-chatbot-with-project-instructions)
+      - [💬 Temporary Chat Windows](#-temporary-chat-windows)
   - [🗺️ Roadmap](#️-roadmap)
   - [🙌 Contributing](#-contributing)
   - [💬 Join Our Discord](#-join-our-discord)
@@ -72,9 +64,13 @@ Finally, tell me how to install the package.
 
 ### 🎙️ Realtime Voice Assistant + MCP Tools
 
+
 <p align="center">
   <video src="https://github.com/user-attachments/assets/e2657b8c-ce0b-40dd-80b6-755324024973" width="100%" />
 </p>
+
+
+
 
 This demo showcases a **realtime voice-based chatbot assistant** built with OpenAI's new Realtime API — now extended with full **MCP tool integration**.
 Talk to the assistant naturally, and watch it execute tools in real time.
@@ -92,6 +88,7 @@ Switch between presets instantly with a click — perfect for organizing tools b
 ### 🧭 Tool Choice Mode
 
 <img width="1161" alt="tool-mode" src="https://github.com/user-attachments/assets/0988f8dd-8a37-4adf-84da-79c083917af9" />
+
 
 Control how tools are used in each chat with **Tool Choice Mode** — switch anytime with `⌘P`.
 
@@ -203,6 +200,7 @@ GITHUB_CLIENT_SECRET=
 
 Step-by-step setup guides for running and configuring MCP Client Chatbot.
 
+
 #### [🔌 MCP Server Setup & Tool Testing](./docs/tips-guides/mcp-server-setup-and-tool-testing.md)
 
 - How to add and configure MCP servers in your environment
@@ -214,7 +212,7 @@ Step-by-step setup guides for running and configuring MCP Client Chatbot.
 #### [▲ Vercel Hosting Guide](./docs/tips-guides/vercel.md)
 
 - Deploy the chatbot to Vercel with simple setup steps for production use.
-
+  
 #### [🎯 System Prompts & Chat Customization](./docs/tips-guides/system-prompts-and-customization.md)
 
 - Personalize your chatbot experience with custom system prompts, user preferences, and MCP tool instructions
