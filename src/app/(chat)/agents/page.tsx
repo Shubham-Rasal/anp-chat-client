@@ -9,6 +9,7 @@ import { AgentCard } from "@/components/agent-card";
 import { useTranslations } from "next-intl";
 import useSWR from "swr";
 import { selectAgentListByUserIdAction } from "@/app/api/chat/actions";
+import { RobotIcon } from "ui/robot-icon";
 
 export default function AgentsPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -22,8 +23,8 @@ export default function AgentsPage() {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">{t("Layout.agents")}</h1>
-        <Button onClick={() => setIsCreateOpen(true)}>
-          <PlusIcon className="size-4 mr-2" />
+        <Button className="font-semibold bg-input/20" variant="outline">
+          <RobotIcon className="fill-foreground size-3.5" />
           {t("Agent.createAgent")}
         </Button>
       </div>

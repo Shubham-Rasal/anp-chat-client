@@ -1,0 +1,32 @@
+{
+  "name": "custom-mcp-server",
+  "version": "0.0.1",
+  "description": "Custom MCP server with GUN database integration",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "start:mcp": "node dist/index.js",
+    "start:gun": "node dist/db/gun-server.js",
+    "start:all": "concurrently \"pnpm start:mcp\" \"pnpm start:gun\"",
+    "dev": "tsx watch src/index.ts",
+    "dev:all": "concurrently \"tsx watch src/index.ts\" \"tsx watch src/db/gun-server.ts\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.3",
+    "@types/express": "^5.0.3",
+    "@types/gun": "^0.9.6",
+    "@types/node": "^24.0.1",
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "gun": "^0.2020.1240",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "winston": "^3.17.0",
+    "zod": "^3.25.64"
+  }
+}
