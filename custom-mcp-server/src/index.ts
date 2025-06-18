@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { addToOrbitDB, getFromOrbitDB } from "./db/orbitdb.js";
 
 const server = new McpServer({
   name: "custom-mcp-server",
@@ -33,6 +34,37 @@ server.tool(
     };
   },
 );
+
+server.tool(
+  "add_to_orbitdb",
+  "Add data to OrbitDB.",
+  {
+    data: z.string(),
+  },
+  async ({ data }) => {
+    await addToOrbitDB(data);
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Data added to OrbitDB: ${data}`,
+        },
+      ],
+    };
+  },
+);
+
+server.tool("get_from_orbitdb", "Get data from OrbitDB.", {}, async () => {
+  const response = await getFromOrbitDB();
+  return {
+    content: [
+      {
+        type: "text",
+        text: `Data retrieved from OrbitDB: ${response}`,
+      },
+    ],
+  };
+});
 
 const transport = new StdioServerTransport();
 

@@ -4,9 +4,9 @@
 
 ### OrbitDB Setup
 
-- [ ] Basic OrbitDB server setup
-- [ ] Configure IPFS node for OrbitDB
-- [ ] Set up key-value store for graph data
+- [x] Basic OrbitDB server setup
+- [x] Configure IPFS node for OrbitDB
+- [ ] Set up documents store for graph data
 - [ ] Implement database connection management
 - [ ] Add error handling and reconnection logic
 
@@ -35,7 +35,7 @@
 
 ### Entity Management
 
-- [x] create_entities tool
+- [ ] create_entities tool
 - [ ] delete_entities tool
 - [ ] get_entities tool
 - [ ] add_observations tool
@@ -98,16 +98,6 @@
 - [ ] Create schema transformation layer
 - [ ] Build import pipeline to OrbitDB
 - [ ] Add validation for external data
-
-## 🧪 Testing
-
-### Unit Tests
-
-- [ ] Entity management tests
-- [ ] Relation management tests
-- [ ] Graph operation tests
-- [ ] IPFS integration tests
-- [ ] Provenance tracking tests
 
 ### Integration Tests
 
