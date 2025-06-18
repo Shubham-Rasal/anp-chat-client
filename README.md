@@ -5,11 +5,10 @@
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/cgoinglove/mcp-client-chatbot&env=BETTER_AUTH_SECRET&env=OPENAI_API_KEY&env=GOOGLE_GENERATIVE_AI_API_KEY&env=ANTHROPIC_API_KEY&envDescription=Learn+more+about+how+to+get+the+API+Keys+for+the+application&envLink=https://github.com/cgoinglove/mcp-client-chatbot/blob/main/.env.example&demo-title=MCP+Client+Chatbot&demo-description=An+Open-Source+MCP+Chatbot+Template+Built+With+Next.js+and+the+AI+SDK+by+Vercel.&products=[{"type":"integration","protocol":"storage","productSlug":"neon","integrationSlug":"neon"}])
 
-Our goal is to create the best possible chatbot UX — focusing on the joy and intuitiveness users feel when calling and interacting with AI tools.
 
-See the experience in action in the [preview](#preview) below!
+This is a fork of a great MCP client - https://github.com/cgoinglove/mcp-client-chatbot
 
-> Built with [Vercel AI SDK](https://sdk.vercel.ai) and [Next.js](https://nextjs.org/), this app adopts modern patterns for building AI chat interfaces. It leverages the power of the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) to seamlessly integrate external tools into your chat experience.
+This fork adds a custom MCP server that uses OrbitDB to store data. Also, this will be used with another project (ANP) for MCP support to agents.
 
 ## Table of Contents
 
@@ -194,71 +193,5 @@ GITHUB_CLIENT_ID=
 GITHUB_CLIENT_SECRET=
 ```
 
-<br/>
-
-## 📘 Guides
-
-Step-by-step setup guides for running and configuring MCP Client Chatbot.
 
 
-#### [🔌 MCP Server Setup & Tool Testing](./docs/tips-guides/mcp-server-setup-and-tool-testing.md)
-
-- How to add and configure MCP servers in your environment
-
-#### [🐳 Docker Hosting Guide](./docs/tips-guides/docker.md)
-
-- How to self-host the chatbot using Docker, including environment configuration.
-
-#### [▲ Vercel Hosting Guide](./docs/tips-guides/vercel.md)
-
-- Deploy the chatbot to Vercel with simple setup steps for production use.
-  
-#### [🎯 System Prompts & Chat Customization](./docs/tips-guides/system-prompts-and-customization.md)
-
-- Personalize your chatbot experience with custom system prompts, user preferences, and MCP tool instructions
-
-#### [🔐 OAuth Sign-In Setup](./docs/tips-guides/oauth.md)
-
-- Configure Google and GitHub OAuth for secure user login support.
-
-<br/>
-
-## 💡 Tips
-
-Advanced use cases and extra capabilities that enhance your chatbot experience.
-
-#### [🧠 Agentic Chatbot with Project Instructions](./docs/tips-guides/project_with_mcp.md)
-
-- Use MCP servers and structured project instructions to build a custom assistant that helps with specific tasks.
-
-#### [💬 Temporary Chat Windows](./docs/tips-guides/temporary_chat.md)
-
-- Open lightweight popup chats for quick side questions or testing — separate from your main thread.
-
-## 🗺️ Roadmap
-
-Planned features coming soon to MCP Client Chatbot:
-
-- [ ] **MCP-integrated LLM Workflow**
-- [ ] **File Attach & Image Generation**
-- [ ] **Collaborative Document Editing** (like OpenAI Canvas: user & assistant co-editing)
-- [ ] **RAG (Retrieval-Augmented Generation)**
-- [ ] **Web-based Compute** (with [WebContainers](https://webcontainers.io) integration)
-
-💡 If you have suggestions or need specific features, please create an [issue](https://github.com/cgoinglove/mcp-client-chatbot/issues)!
-
-## 🙌 Contributing
-
-We welcome all contributions! Bug reports, feature ideas, code improvements — everything helps us build the best local AI assistant.
-
-**For detailed contribution guidelines**, please see our [Contributing Guide](./CONTRIBUTING.md).
-
-**Language Translations:** Help us make the chatbot accessible to more users by adding new language translations. See [language.md](./messages/language.md) for instructions on how to contribute translations.
-
-Let's build it together 🚀
-
-## 💬 Join Our Discord
-
-[![Discord](https://img.shields.io/discord/1374047276074537103?label=Discord&logo=discord&color=5865F2)](https://discord.gg/gCRu69Upnp)
-
-Connect with the community, ask questions, and get support on our official Discord server!
