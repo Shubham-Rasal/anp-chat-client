@@ -1,74 +1,39 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { config } from "./config/index.js";
-import {
-  createEntities,
-  deleteEntities,
-  getEntities,
-  addObservations,
-} from "./tools/entities.js";
-import { createRelations, deleteRelations } from "./tools/relations.js";
-import { readGraph } from "./tools/graph.js";
+import { z } from "zod";
 
-// Initialize MCP Server
 const server = new McpServer({
   name: "custom-mcp-server",
-  version: config.version,
+  version: "0.0.1",
 });
 
-// Register tools
 server.tool(
-  createEntities.name,
-  createEntities.description,
-  createEntities.parameters,
-  createEntities.handler,
+  "get_weather",
+  "Get the current weather at a location.",
+  {
+    latitude: z.number(),
+    longitude: z.number(),
+  },
+  async ({ latitude, longitude }) => {
+    const response = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m&hourly=temperature_2m&daily=sunrise,sunset&timezone=auto`,
+    );
+    const data = await response.json();
+    return {
+      content: [
+        {
+          type: "text",
+          text: `The current temperature in ${latitude}, ${longitude} is ${data.current.temperature_2m}°C.`,
+        },
+        {
+          type: "text",
+          text: `The sunrise in ${latitude}, ${longitude} is ${data.daily.sunrise[0]} and the sunset is ${data.daily.sunset[0]}.`,
+        },
+      ],
+    };
+  },
 );
 
-server.tool(
-  deleteEntities.name,
-  deleteEntities.description,
-  deleteEntities.parameters,
-  deleteEntities.handler,
-);
-
-server.tool(
-  getEntities.name,
-  getEntities.description,
-  getEntities.parameters,
-  getEntities.handler,
-);
-
-server.tool(
-  addObservations.name,
-  addObservations.description,
-  addObservations.parameters,
-  addObservations.handler,
-);
-
-server.tool(
-  createRelations.name,
-  createRelations.description,
-  createRelations.parameters,
-  createRelations.handler,
-);
-
-server.tool(
-  deleteRelations.name,
-  deleteRelations.description,
-  deleteRelations.parameters,
-  deleteRelations.handler,
-);
-
-server.tool(
-  readGraph.name,
-  readGraph.description,
-  readGraph.parameters,
-  readGraph.handler,
-);
-
-// Initialize transport
 const transport = new StdioServerTransport();
 
-// Start server
-// logger.info(`MCP server initialized with version ${config.version}`);
 await server.connect(transport);

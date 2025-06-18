@@ -43,7 +43,11 @@
     "src/types/global.d.ts",
     "vitest.setup.ts",
     "vitest.config.ts",
-    "drizzle.config.ts"
+    "drizzle.config.ts",
+    "custom-mcp-server/src/db/orbitdb.test.js",
+    "custom-mcp-server/src/db/orbitdb-server.js",
+    "custom-mcp-server/src/config/index.ts",
+    "custom-mcp-server/src/db/orbitdb.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,145 +1,133 @@
-# MCP Knowledge Graph Server - Implementation Tasks
+# 🗓️ MCP Knowledge Graph Server TODO
 
-## 🔧 Core Server Setup
+## 🎯 Core Infrastructure
 
-- [x] Set up basic Express/Node.js server
-- [x] Configure MCP protocol integration
-- [x] Implement error handling middleware
-- [x] Add request validation middleware
-- [x] Set up configuration management
-- [x] Add logging system
-- [x] Implement health check endpoints
+### OrbitDB Setup
 
-## 🗄️ GUN Database Integration
+- [ ] Basic OrbitDB server setup
+- [ ] Configure IPFS node for OrbitDB
+- [ ] Set up key-value store for graph data
+- [ ] Implement database connection management
+- [ ] Add error handling and reconnection logic
 
-- [x] Initialize GUN.js server instance
-- [x] Design node/key-value schema for entities
-- [x] Design schema for relations
-- [x] Set up peer discovery system
-- [x] Implement data persistence layer
+### Data Schema Implementation
 
-## 📡 MCP Tool Implementation
+- [ ] Implement Entity interface:
+  ```ts
+  interface Entity {
+    name: string;
+    entityType: string;
+    observations: string[];
+  }
+  ```
+- [ ] Implement Relation interface:
+  ```ts
+  interface Relation {
+    from: string;
+    to: string;
+    relationType: string;
+  }
+  ```
+- [ ] Set up schema validation
+- [ ] Add indexing for efficient queries
+
+## 🛠️ MCP Tools Implementation
 
 ### Entity Management
 
-- [x] Implement `create_entities` endpoint
-  - [x] Input validation
-  - [x] Entity type validation
-  - [x] Duplicate checking
-  - [x] Response formatting
-- [x] Implement `delete_entities` endpoint
-  - [x] Cascade deletion for relations
-  - [x] Validation checks
-- [x] Implement `get_entities` endpoint
-  - [x] Single entity retrieval
-  - [x] Batch entity retrieval
-  - [x] Type filtering
-  - [x] Response formatting
-- [x] Implement `add_observations` endpoint
-  - [x] Observation format validation
-  - [x] Update mechanisms
+- [x] create_entities tool
+- [ ] delete_entities tool
+- [ ] get_entities tool
+- [ ] add_observations tool
+- [ ] delete_observations tool
 
 ### Relation Management
 
-- [x] Implement `create_relations` endpoint
-  - [x] Relation type validation
-  - [x] Entity existence checks
-  - [x] Circular reference prevention
-- [x] Implement `delete_relations` endpoint
-  - [x] Relation existence validation
-  - [x] Integrity checks
+- [ ] create_relations tool
+- [ ] delete_relations tool
+- [ ] Implement bidirectional relation support
+- [ ] Add relation property support
 
 ### Graph Operations
 
-- [x] Implement `read_graph` endpoint
-  - [x] Pagination support
-  - [x] Filter options
-  - [x] Performance optimization
-- [ ] Implement `search_nodes` functionality
-  - [ ] Full-text search
-  - [ ] Type-based filtering
-  - [ ] Observation content search
-- [ ] Implement `open_nodes` endpoint
-  - [ ] Relation depth control
-  - [ ] Response formatting
+- [ ] read_graph tool
+- [ ] search_nodes functionality
+- [ ] open_nodes implementation
+- [ ] Implement graph traversal utilities
 
 ## 📦 IPFS Integration
 
-- [ ] Set up IPFS node connection
-- [ ] Implement `snapshot_graph` functionality
+### Snapshot Management
+
+- [ ] Implement snapshot_graph tool:
   - [ ] Graph serialization to JSON-LD
-  - [ ] IPFS upload mechanism
-  - [ ] CID generation and storage
-- [ ] Implement `pin_snapshot` functionality
-  - [ ] Filecoin integration
-  - [ ] Pinning service integration
-- [ ] Implement `resolve_latest` endpoint
-  - [ ] IPNS resolution
-  - [ ] Cache mechanism
+  - [ ] IPFS upload functionality
+  - [ ] CID generation and management
+- [ ] Add pin_snapshot functionality
+- [ ] Implement resolve_latest with IPNS
 
-## 🔍 Provenance System
+### Provenance Tracking
 
-- [ ] Design provenance metadata schema
-- [ ] Implement change logging system
-  - [ ] Timestamp tracking
-  - [ ] Agent ID tracking
-  - [ ] Change description logging
+- [ ] Implement provenance metadata structure:
+  ```json
+  {
+    "timestamp": number,
+    "updated_by": string,
+    "prev": "CID",
+    "current": "CID",
+    "change_log": string[]
+  }
+  ```
+- [ ] Add get_provenance tool
 - [ ] Implement CID chain tracking
-- [ ] Create `get_provenance` endpoint
-  - [ ] Node-level history
-  - [ ] Graph-level history
-- [ ] Add optional blockchain anchoring
-  - [ ] Ethereum contract integration
-  - [ ] Transaction management
+- [ ] Add update history logging
 
 ## 🌐 External Knowledge Graph Integration
 
-- [ ] Create plugin architecture for external sources
-- [ ] Implement Wikidata integration
-  - [ ] SPARQL query builder
-  - [ ] EntityData API client
-  - [ ] Response transformer
-- [ ] Implement DBpedia integration
-  - [ ] SPARQL endpoint client
-  - [ ] Schema mapping
-- [ ] Implement OpenAlex integration
-  - [ ] REST client
-  - [ ] Data transformer
-- [ ] Implement ConceptNet integration
-  - [ ] API client
-  - [ ] Response mapping
-- [ ] Create `import_external_kg` endpoint
-  - [ ] Source selection logic
-  - [ ] Import controls
-  - [ ] Conflict resolution
+### Query Adapters
 
-## 🧪 Testing Infrastructure
+- [ ] Wikidata integration (SPARQL + EntityData API)
+- [ ] DBpedia connector (SPARQL endpoint)
+- [ ] OpenAlex integration (REST API)
+- [ ] ConceptNet support (REST API)
+- [ ] CommonsenseKG/ATOMIC integration
 
-- [ ] Set up testing framework
-- [ ] Create unit tests for each MCP tool
-- [ ] Implement integration tests
-  - [ ] GUN operations
-  - [ ] IPFS operations
-  - [ ] External KG imports
-- [ ] Create end-to-end test suite
-- [ ] Set up CI/CD pipeline
-- [ ] Implement performance testing
-- [ ] Add load testing scripts
+### Data Pipeline
+
+- [ ] Implement query adapter framework
+- [ ] Create schema transformation layer
+- [ ] Build import pipeline to OrbitDB
+- [ ] Add validation for external data
+
+## 🧪 Testing
+
+### Unit Tests
+
+- [ ] Entity management tests
+- [ ] Relation management tests
+- [ ] Graph operation tests
+- [ ] IPFS integration tests
+- [ ] Provenance tracking tests
+
+### Integration Tests
+
+- [ ] End-to-end graph update flow
+- [ ] External KG import flow
+- [ ] CID resolution through IPNS
+- [ ] Provenance chain validation
 
 ## 📚 Documentation
 
-- [ ] Create API documentation
-- [ ] Write setup guide
-- [ ] Document schema design
-- [ ] Create usage examples
-- [ ] Document external KG integration process
-- [ ] Create troubleshooting guide
+- [ ] API documentation
+- [ ] Setup guide
+- [ ] Integration examples
+- [ ] External KG connector guide
+- [ ] Provenance tracking guide
 
 ## 🚀 Deployment
 
-- [ ] Create Docker configuration
-- [ ] Set up container orchestration
-- [ ] Configure production environment
-- [ ] Set up monitoring
-- [ ] Implement backup strategy
-- [ ] Create deployment documentation
+- [ ] Set up CI/CD pipeline
+- [ ] Configure production IPFS node
+- [ ] Set up monitoring and logging
+- [ ] Create deployment guide
+- [ ] Add health check endpoints

@@ -53,3 +53,5 @@ local-data
 .cursor
 *.ignore
 .mcp-config.json
+custom-mcp-server/ipfs/blocks
+custom-mcp-server/orbitdb

@@ -5,3 +5,72 @@
 {"level":"info","message":"Created entity: Mammal (entity_1750024646834_z6qhfs10v)"}
 {"level":"info","message":"Created entity: Cat (entity_1750025269206_9cx5svizv)"}
 {"level":"info","message":"Created entity: cat (entity_1750025329865_lv623ybc5)"}
+{"level":"info","message":"Created entity: Cat (entity_1750180004911_8pdpszu1n)"}
+{"level":"info","message":"GUN server listening on port 8765"}
+{"level":"info","message":"Peer connected: unknown"}
+{"level":"info","message":"GUN server listening on port 8765"}
+{"level":"info","message":"Peer connected: unknown"}
+{"level":"info","message":"GUN server listening on port 8765"}
+{"level":"info","message":"Peer connected: unknown"}
+{"level":"info","message":"GUN server listening on port 8765"}
+{"level":"info","message":"Peer connected: unknown"}
+{"level":"info","message":"Peer disconnected: http://gun-matrix.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-us.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-eu.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: http://gun-matrix.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-us.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-eu.herokuapp.com/gun"}
+{"level":"info","message":"GUN server listening on port 8765"}
+{"level":"info","message":"Peer connected: unknown"}
+{"level":"info","message":"Created entity: cat (entity_1750181696679_c7fhr5wag)"}
+{"level":"info","message":"Peer disconnected: http://gun-matrix.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-us.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-eu.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: http://gun-matrix.herokuapp.com/gun"}
+{"level":"info","message":"Created entity: dog (entity_1750181702240_7xuz6w8vn)"}
+{"level":"info","message":"Peer disconnected: https://gun-us.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-eu.herokuapp.com/gun"}
+{"level":"info","message":"Created entity: elephant (entity_1750181733227_4jgfvxphu)"}
+{"level":"info","message":"Created entity: elephant (entity_1750181788161_dv7c449ye)"}
+{"level":"info","message":"Created entity: elephant (entity_1750181789925_7u419608b)"}
+{"level":"info","message":"GUN server listening on port 8765"}
+{"level":"info","message":"Created entity: cat (entity_1750182052837_mkfo17obi)"}
+{"level":"info","message":"Peer disconnected: http://gun-matrix.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-us.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-eu.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: http://gun-matrix.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-eu.herokuapp.com/gun"}
+{"level":"info","message":"Peer disconnected: https://gun-us.herokuapp.com/gun"}
+{"level":"info","message":"Created entity: cat (entity_1750182078394_c9a6c6e37)"}
+{"level":"info","message":"Created entity: dog (entity_1750182119097_ypxlp23q5)"}
+{"level":"info","message":"GUN server listening on port 8765"}
+{"level":"info","message":"GUN server listening on port 8765"}
+{"level":"info","message":"Peer connected: unknown"}
+{"level":"info","message":"Peer connected: http://localhost:8765/gun"}
+{"level":"info","message":"Peer disconnected: http://localhost:8765/gun"}
+{"level":"info","message":"Peer disconnected: unknown"}
+{"level":"info","message":"Peer disconnected: unknown"}
+{"level":"info","message":"Peer disconnected: http://localhost:8765/gun"}
+{"level":"info","message":"Created entity: Albert Einstein (entity_1750182466052_q3b3tu1hm)"}
+{"level":"info","message":"Created entity: Theory of Relativity (entity_1750182466055_blz1gcq0j)"}
+{"level":"info","message":"Created entity: E=mc^2 (entity_1750182466056_a1ejnzbj3)"}
+{"level":"info","message":"Created entity: Albert Einstein (entity_1750182545947_x62k7wd6s)"}
+{"level":"info","message":"Created entity: Theory of Relativity (entity_1750182545948_kye413x1c)"}
+{"level":"info","message":"Created entity: E=mc^2 (entity_1750182545948_kcyos2f7x)"}
+{"level":"info","message":"MCP server initialized with version 0.0.1"}
+{"level":"info","message":"MCP server initialized with version 0.0.1"}
+{"level":"info","message":"MCP server initialized with version 1.7.0"}
+{"level":"info","message":"Created entity: Albert Einstein (entity_1750184549215_gc5ld2www)"}
+{"level":"info","message":"Created entity: Theory of Relativity (entity_1750184549217_r4v19m7bz)"}
+{"level":"info","message":"Created entity: E=mc^2 (entity_1750184549221_2ngq4siil)"}
+{"level":"info","message":"Created entity: Albert Einstein (entity_1750184634914_t3eq4j4rj)"}
+{"level":"info","message":"Created entity: Theory of Relativity (entity_1750184634915_qqjq1csum)"}
+{"level":"info","message":"Created entity: E=mc^2 (entity_1750184634915_utrowyihj)"}
+{"level":"info","message":"MCP server initialized with version 1.7.0"}
+{"level":"info","message":"Created entity: Albert Einstein (entity_1750184788751_jme8onpib)"}
+{"level":"info","message":"Created entity: Theory of Relativity (entity_1750184788756_uq8cn8myx)"}
+{"level":"info","message":"Created entity: E=mc^2 (entity_1750184788758_pvj9yfqyx)"}
+{"level":"info","message":"MCP server initialized with version 1.7.0"}
+{"level":"info","message":"Created entity: Albert Einstein (entity_1750184914075_rdk7zlp8o)"}
+{"level":"info","message":"Created entity: Theory of Relativity (entity_1750184914079_lj8aeue8n)"}
+{"level":"info","message":"Created entity: E=mc^2 (entity_1750184914081_o4a98y8nn)"}

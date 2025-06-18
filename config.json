@@ -1,0 +1,12 @@
+{
+  "command": "node",
+  "args": ["custom-mcp-server/dist/index.js"],
+  "env": {
+    "HOME": "/home/bluequbit",
+    "LOGNAME": "bluequbit",
+    "PATH": "/home/bluequbit/.cache/pnpm/dlx/nwvcl6keauabgse3fgiitc2nwq/1977ee405a3-5ab85/node_modules/.bin:/home/bluequbit/.pyenv/shims:/home/bluequbit/.pyenv/bin:/home/bluequbit/.pyenv/bin:/home/bluequbit/.nvm/versions/node/v22.11.0/bin:/home/bluequbit/.local/share/zinit/polaris/bin:/tmp/.mount_Cursorx1QsmQ/usr/bin/:/tmp/.mount_Cursorx1QsmQ/usr/sbin/:/tmp/.mount_Cursorx1QsmQ/usr/games/:/tmp/.mount_Cursorx1QsmQ/bin/:/tmp/.mount_Cursorx1QsmQ/sbin/:/home/bluequbit/.local/bin:/home/bluequbit/.cargo/bin:/home/bluequbit/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/bluequbit/.local/bin:/home/bluequbit/.local/bin:/usr/local/go/bin:/home/bluequbit/Dev/Android/emulator:/home/bluequbit/Dev/Android/platform-tools:/home/bluequbit/.config/Cursor/User/globalStorage/github.copilot-chat/debugCommand:/home/bluequbit/.local/bin:/usr/local/go/bin:/home/bluequbit/Dev/Android/emulator:/home/bluequbit/Dev/Android/platform-tools",
+    "SHELL": "/usr/bin/zsh",
+    "TERM": "xterm-256color",
+    "USER": "bluequbit"
+  }
+}
