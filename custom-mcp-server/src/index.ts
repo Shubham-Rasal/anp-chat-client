@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { addToOrbitDB, getFromOrbitDB } from "./db/orbitdb.js";
+import { graphDB } from "./db/orbitdb.js";
 
 const server = new McpServer({
   name: "custom-mcp-server",
@@ -9,26 +9,20 @@ const server = new McpServer({
 });
 
 server.tool(
-  "get_weather",
-  "Get the current weather at a location.",
+  "get_entity",
+  "Get an entity from the knowledge graph. Sample entity: {name: 'John Doe', entityType: 'person', observations: ['John Doe is a person']}",
   {
-    latitude: z.number(),
-    longitude: z.number(),
+    entity: z.object({
+      id: z.string().min(1, "Entity id cannot be empty"),
+    }),
   },
-  async ({ latitude, longitude }) => {
-    const response = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m&hourly=temperature_2m&daily=sunrise,sunset&timezone=auto`,
-    );
-    const data = await response.json();
+  async ({ entity }) => {
+    const result = await graphDB.getEntityById(entity.id);
     return {
       content: [
         {
           type: "text",
-          text: `The current temperature in ${latitude}, ${longitude} is ${data.current.temperature_2m}°C.`,
-        },
-        {
-          type: "text",
-          text: `The sunrise in ${latitude}, ${longitude} is ${data.daily.sunrise[0]} and the sunset is ${data.daily.sunset[0]}.`,
+          text: `Entity: ${JSON.stringify(result)}`,
         },
       ],
     };
@@ -36,35 +30,28 @@ server.tool(
 );
 
 server.tool(
-  "add_to_orbitdb",
-  "Add data to OrbitDB.",
+  "create_entity",
+  "Create one or more entities in the knowledge graph. Sample entity: {name: 'John Doe', entityType: 'person', observations: ['John Doe is a person']}",
   {
-    data: z.string(),
+    entity: z.object({
+      name: z.string().min(1, "Entity name cannot be empty"),
+      entityType: z.string().min(1, "Entity type cannot be empty"),
+      observations: z.array(z.string()).optional().default([]),
+    }),
   },
-  async ({ data }) => {
-    await addToOrbitDB(data);
+  async ({ entity }) => {
+    const result = await graphDB.addEntity(entity);
+
     return {
       content: [
         {
           type: "text",
-          text: `Data added to OrbitDB: ${data}`,
+          text: `Created ${result} entities with IDs: ${result}`,
         },
       ],
     };
   },
 );
-
-server.tool("get_from_orbitdb", "Get data from OrbitDB.", {}, async () => {
-  const response = await getFromOrbitDB();
-  return {
-    content: [
-      {
-        type: "text",
-        text: `Data retrieved from OrbitDB: ${response}`,
-      },
-    ],
-  };
-});
 
 const transport = new StdioServerTransport();
 

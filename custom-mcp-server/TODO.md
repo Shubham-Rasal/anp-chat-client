@@ -6,13 +6,13 @@
 
 - [x] Basic OrbitDB server setup
 - [x] Configure IPFS node for OrbitDB
-- [ ] Set up documents store for graph data
-- [ ] Implement database connection management
-- [ ] Add error handling and reconnection logic
+- [x] Set up documents store for graph data
+- [x] Implement database connection management
+- [x] Add error handling and reconnection logic
 
 ### Data Schema Implementation
 
-- [ ] Implement Entity interface:
+- [x] Implement Entity interface:
   ```ts
   interface Entity {
     name: string;
@@ -20,7 +20,7 @@
     observations: string[];
   }
   ```
-- [ ] Implement Relation interface:
+- [x] Implement Relation interface:
   ```ts
   interface Relation {
     from: string;
@@ -28,31 +28,31 @@
     relationType: string;
   }
   ```
-- [ ] Set up schema validation
-- [ ] Add indexing for efficient queries
+- [x] Set up schema validation
+- [x] Add indexing for efficient queries
 
 ## 🛠️ MCP Tools Implementation
 
 ### Entity Management
 
-- [ ] create_entities tool
-- [ ] delete_entities tool
-- [ ] get_entities tool
-- [ ] add_observations tool
-- [ ] delete_observations tool
+- [x] create_entitie tool
+- [x] get_entitie tool
+- [x] delete_entitie tool
+- [x] add_observation tool
+- [x] delete_observation tool
 
 ### Relation Management
 
-- [ ] create_relations tool
-- [ ] delete_relations tool
+- [ ] create_relation tool
+- [ ] delete_relation tool
 - [ ] Implement bidirectional relation support
 - [ ] Add relation property support
 
 ### Graph Operations
 
 - [ ] read_graph tool
-- [ ] search_nodes functionality
-- [ ] open_nodes implementation
+- [ ] search_node functionality
+- [ ] open_node implementation
 - [ ] Implement graph traversal utilities
 
 ## 📦 IPFS Integration
