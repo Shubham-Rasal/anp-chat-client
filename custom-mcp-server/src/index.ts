@@ -2,11 +2,21 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { graphDB } from "./db/orbitdb.js";
+import { WikidataAdapter } from "./lib/kg-adapters/wikidata.js";
+import type {
+  ExternalEntity,
+  ExternalRelation,
+} from "./lib/kg-adapters/adapter.js";
 
 const server = new McpServer({
   name: "custom-mcp-server",
   version: "0.0.1",
 });
+
+// Initialize adapters
+const adapters = {
+  wikidata: new WikidataAdapter(),
+};
 
 server.tool(
   "get_entity",
@@ -152,6 +162,115 @@ server.tool(
         {
           type: "text",
           text: `Graph traversal result:\n${JSON.stringify(result, null, 2)}`,
+        },
+      ],
+    };
+  },
+);
+
+server.tool(
+  "search_external_kg",
+  "Search for entities in external knowledge graphs",
+  {
+    source: z.enum(["wikidata"]),
+    query: z.string().min(1, "Search query cannot be empty"),
+    options: z
+      .object({
+        limit: z.number().optional(),
+        offset: z.number().optional(),
+        language: z.string().optional(),
+      })
+      .optional(),
+  },
+  async ({ source, query, options }) => {
+    const adapter = adapters[source];
+    const results = await adapter.searchEntities(query, options);
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Found ${results.length} entities in ${source}:\n${JSON.stringify(results, null, 2)}`,
+        },
+      ],
+    };
+  },
+);
+
+server.tool(
+  "import_external_entity",
+  "Import an entity and its relations from an external knowledge graph",
+  {
+    source: z.enum(["wikidata"]),
+    entityId: z.string().min(1, "Entity ID cannot be empty"),
+    options: z
+      .object({
+        importRelations: z.boolean().optional(),
+        maxRelations: z.number().optional(),
+        language: z.string().optional(),
+      })
+      .optional(),
+  },
+  async ({ source, entityId, options }) => {
+    const adapter = adapters[source];
+
+    // First get the entity details
+    const [entity] = await adapter.searchEntities(`id:${entityId}`, {
+      limit: 1,
+    });
+    if (!entity) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `No entity found with ID ${entityId} in ${source}`,
+          },
+        ],
+      };
+    }
+
+    // Import the entity
+    const internalEntity = adapter.transformEntity(entity);
+    const entityId_ = await graphDB.addEntity(internalEntity);
+
+    const relationIds: string[] = [];
+
+    // Import relations if requested
+    if (options?.importRelations) {
+      const relations = await adapter.getEntityRelations(entityId, {
+        limit: options.maxRelations || 10,
+        language: options.language,
+      });
+
+      // Import each relation and its target entity
+      for (const relation of relations) {
+        const [targetEntity] = await adapter.searchEntities(
+          `id:${relation.to}`,
+          { limit: 1 },
+        );
+        if (targetEntity) {
+          const internalTargetEntity = adapter.transformEntity(targetEntity);
+          const targetId = await graphDB.addEntity(internalTargetEntity);
+
+          const internalRelation = adapter.transformRelation({
+            ...relation,
+            from: entityId_,
+            to: targetId,
+          });
+
+          const relationId = await graphDB.addRelation(internalRelation);
+          relationIds.push(relationId);
+        }
+      }
+    }
+
+    return {
+      content: [
+        {
+          type: "text",
+          text:
+            `Imported entity ${entity.name} (${entityId_}) from ${source}\n` +
+            `Imported ${relationIds.length} relations: ${relationIds.join(", ")}`,
         },
       ],
     };

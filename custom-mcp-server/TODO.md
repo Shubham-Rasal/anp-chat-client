@@ -86,7 +86,7 @@
 
 ### Query Adapters
 
-- [ ] Wikidata integration (SPARQL + EntityData API)
+- [x] Wikidata integration (SPARQL + EntityData API)
 - [ ] DBpedia connector (SPARQL endpoint)
 - [ ] OpenAlex integration (REST API)
 - [ ] ConceptNet support (REST API)
@@ -94,10 +94,10 @@
 
 ### Data Pipeline
 
-- [ ] Implement query adapter framework
-- [ ] Create schema transformation layer
-- [ ] Build import pipeline to OrbitDB
-- [ ] Add validation for external data
+- [x] Implement query adapter framework
+- [x] Create schema transformation layer
+- [x] Build import pipeline to OrbitDB
+- [x] Add validation for external data
 
 ### Integration Tests
 
