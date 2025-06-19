@@ -87,7 +87,7 @@
 ### Query Adapters
 
 - [x] Wikidata integration (SPARQL + EntityData API)
-- [ ] DBpedia connector (SPARQL endpoint)
+- [x] DBpedia connector (SPARQL endpoint)
 - [ ] OpenAlex integration (REST API)
 - [ ] ConceptNet support (REST API)
 - [ ] CommonsenseKG/ATOMIC integration

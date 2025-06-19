@@ -3,6 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { graphDB } from "./db/orbitdb.js";
 import { WikidataAdapter } from "./lib/kg-adapters/wikidata.js";
+import { DBpediaAdapter } from "./lib/kg-adapters/dbpedia.js";
 import type {
   ExternalEntity,
   ExternalRelation,
@@ -16,6 +17,7 @@ const server = new McpServer({
 // Initialize adapters
 const adapters = {
   wikidata: new WikidataAdapter(),
+  dbpedia: new DBpediaAdapter(),
 };
 
 server.tool(
@@ -172,7 +174,7 @@ server.tool(
   "search_external_kg",
   "Search for entities in external knowledge graphs",
   {
-    source: z.enum(["wikidata"]),
+    source: z.enum(["wikidata", "dbpedia"]),
     query: z.string().min(1, "Search query cannot be empty"),
     options: z
       .object({
@@ -201,7 +203,7 @@ server.tool(
   "import_external_entity",
   "Import an entity and its relations from an external knowledge graph",
   {
-    source: z.enum(["wikidata"]),
+    source: z.enum(["wikidata", "dbpedia"]),
     entityId: z.string().min(1, "Entity ID cannot be empty"),
     options: z
       .object({
