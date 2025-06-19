@@ -43,17 +43,17 @@
 
 ### Relation Management
 
-- [ ] create_relation tool
-- [ ] delete_relation tool
-- [ ] Implement bidirectional relation support
-- [ ] Add relation property support
+- [x] create_relation tool
+- [x] delete_relation tool
+- [x] Implement bidirectional relation support
+- [x] Add relation property support
 
 ### Graph Operations
 
-- [ ] read_graph tool
-- [ ] search_node functionality
-- [ ] open_node implementation
-- [ ] Implement graph traversal utilities
+- [x] read_graph tool
+- [x] search_node functionality
+- [x] open_node implementation
+- [x] Implement graph traversal utilities
 
 ## 📦 IPFS Integration
 
