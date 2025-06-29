@@ -88,7 +88,7 @@
 
 - [x] Wikidata integration (SPARQL + EntityData API)
 - [x] DBpedia connector (SPARQL endpoint)
-- [ ] OpenAlex integration (REST API)
+- [x] OpenAlex integration (REST API)
 - [ ] ConceptNet support (REST API)
 - [ ] CommonsenseKG/ATOMIC integration
 
@@ -114,10 +114,4 @@
 - [ ] External KG connector guide
 - [ ] Provenance tracking guide
 
-## 🚀 Deployment
 
-- [ ] Set up CI/CD pipeline
-- [ ] Configure production IPFS node
-- [ ] Set up monitoring and logging
-- [ ] Create deployment guide
-- [ ] Add health check endpoints

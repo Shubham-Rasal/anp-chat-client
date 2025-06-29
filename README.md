@@ -5,7 +5,6 @@
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/cgoinglove/mcp-client-chatbot&env=BETTER_AUTH_SECRET&env=OPENAI_API_KEY&env=GOOGLE_GENERATIVE_AI_API_KEY&env=ANTHROPIC_API_KEY&envDescription=Learn+more+about+how+to+get+the+API+Keys+for+the+application&envLink=https://github.com/cgoinglove/mcp-client-chatbot/blob/main/.env.example&demo-title=MCP+Client+Chatbot&demo-description=An+Open-Source+MCP+Chatbot+Template+Built+With+Next.js+and+the+AI+SDK+by+Vercel.&products=[{"type":"integration","protocol":"storage","productSlug":"neon","integrationSlug":"neon"}])
 
-
 This is a fork of a great MCP client - https://github.com/cgoinglove/mcp-client-chatbot
 
 This fork adds a custom MCP server that uses OrbitDB to store data. Also, this will be used with another project (ANP) for MCP support to agents.
@@ -24,17 +23,18 @@ This fork adds a custom MCP server that uses OrbitDB to store data. Also, this w
     - [Quick Start (Local Version) 🚀](#quick-start-local-version-)
     - [Environment Variables](#environment-variables)
   - [📘 Guides](#-guides)
-      - [🔌 MCP Server Setup \& Tool Testing](#-mcp-server-setup--tool-testing)
-      - [🐳 Docker Hosting Guide](#-docker-hosting-guide)
-      - [▲ Vercel Hosting Guide](#-vercel-hosting-guide)
-      - [🎯 System Prompts \& Chat Customization](#-system-prompts--chat-customization)
-      - [🔐 OAuth Sign-In Setup](#-oauth-sign-in-setup)
+    - [🔌 MCP Server Setup \& Tool Testing](#-mcp-server-setup--tool-testing)
+    - [🐳 Docker Hosting Guide](#-docker-hosting-guide)
+    - [▲ Vercel Hosting Guide](#-vercel-hosting-guide)
+    - [🎯 System Prompts \& Chat Customization](#-system-prompts--chat-customization)
+    - [🔐 OAuth Sign-In Setup](#-oauth-sign-in-setup)
   - [💡 Tips](#-tips)
-      - [🧠 Agentic Chatbot with Project Instructions](#-agentic-chatbot-with-project-instructions)
-      - [💬 Temporary Chat Windows](#-temporary-chat-windows)
+    - [🧠 Agentic Chatbot with Project Instructions](#-agentic-chatbot-with-project-instructions)
+    - [💬 Temporary Chat Windows](#-temporary-chat-windows)
   - [🗺️ Roadmap](#️-roadmap)
   - [🙌 Contributing](#-contributing)
   - [💬 Join Our Discord](#-join-our-discord)
+  - [🛠️ MCP Tools](#️-mcp-tools)
 
 ---
 
@@ -63,13 +63,9 @@ Finally, tell me how to install the package.
 
 ### 🎙️ Realtime Voice Assistant + MCP Tools
 
-
 <p align="center">
   <video src="https://github.com/user-attachments/assets/e2657b8c-ce0b-40dd-80b6-755324024973" width="100%" />
 </p>
-
-
-
 
 This demo showcases a **realtime voice-based chatbot assistant** built with OpenAI's new Realtime API — now extended with full **MCP tool integration**.
 Talk to the assistant naturally, and watch it execute tools in real time.
@@ -87,7 +83,6 @@ Switch between presets instantly with a click — perfect for organizing tools b
 ### 🧭 Tool Choice Mode
 
 <img width="1161" alt="tool-mode" src="https://github.com/user-attachments/assets/0988f8dd-8a37-4adf-84da-79c083917af9" />
-
 
 Control how tools are used in each chat with **Tool Choice Mode** — switch anytime with `⌘P`.
 
@@ -193,5 +188,150 @@ GITHUB_CLIENT_ID=
 GITHUB_CLIENT_SECRET=
 ```
 
+## 🛠️ MCP Tools
 
+Below is a list of available MCP tools, their descriptions, and usage examples.
 
+### Entity Management
+
+- **create_entities**
+
+  - **Description:** Create one or more entities in the knowledge graph.
+  - **Example:**
+    ```json
+    {
+      "entities": [
+        {
+          "name": "Alan Turing",
+          "entityType": "Person",
+          "observations": ["Mathematician"]
+        }
+      ]
+    }
+    ```
+
+- **get_entity**
+
+  - **Description:** Get an entity from the knowledge graph by ID.
+  - **Example:**
+    ```json
+    { "entity": { "id": "123" } }
+    ```
+
+- **delete_entity**
+
+  - **Description:** Delete an entity from the knowledge graph by ID.
+  - **Example:**
+    ```json
+    { "entityId": "123" }
+    ```
+
+- **add_observation**
+
+  - **Description:** Add an observation to an entity.
+  - **Example:**
+    ```json
+    { "entityId": "123", "observation": "New observation" }
+    ```
+
+- **delete_observation**
+  - **Description:** Delete an observation from an entity.
+  - **Example:**
+    ```json
+    { "entityId": "123", "observation": "Old observation" }
+    ```
+
+### Relation Management
+
+- **create_relation**
+
+  - **Description:** Create a relation between two entities.
+  - **Example:**
+    ```json
+    { "relation": { "from": "123", "to": "456", "relationType": "colleague" } }
+    ```
+
+- **delete_relation**
+  - **Description:** Delete a relation by its ID.
+  - **Example:**
+    ```json
+    { "relationId": "789" }
+    ```
+
+### Graph Operations
+
+- **search_nodes**
+
+  - **Description:** Search for entities in the knowledge graph by name or type.
+  - **Example:**
+    ```json
+    { "query": "Turing" }
+    ```
+
+- **read_graph**
+  - **Description:** Traverse the graph starting from a given entity.
+  - **Example:**
+    ```json
+    { "startEntityId": "123", "maxDepth": 2 }
+    ```
+
+### External Knowledge Graph Integration
+
+- **search_external_kg**
+
+  - **Description:** Search for entities in external knowledge graphs (Wikidata, DBpedia, OpenAlex).
+  - **Example:**
+    ```json
+    {
+      "source": "wikidata",
+      "query": "Alan Turing",
+      "options": { "limit": 5, "language": "en" }
+    }
+    ```
+    ```json
+    {
+      "source": "dbpedia",
+      "query": "Alan Turing",
+      "options": { "limit": 5, "language": "en" }
+    }
+    ```
+    ```json
+    {
+      "source": "openalex",
+      "query": "Alan Turing",
+      "options": { "limit": 5 }
+    }
+    ```
+
+- **import_external_entity**
+  - **Description:** Import an entity and its relations from an external knowledge graph.
+  - **Example:**
+    ```json
+    {
+      "source": "wikidata",
+      "entityId": "Q7259",
+      "options": {
+        "importRelations": true,
+        "maxRelations": 5,
+        "language": "en"
+      }
+    }
+    ```
+    ```json
+    {
+      "source": "dbpedia",
+      "entityId": "Alan_Turing",
+      "options": {
+        "importRelations": true,
+        "maxRelations": 5,
+        "language": "en"
+      }
+    }
+    ```
+    ```json
+    {
+      "source": "openalex",
+      "entityId": "A2941294272",
+      "options": { "importRelations": true, "maxRelations": 5 }
+    }
+    ```
